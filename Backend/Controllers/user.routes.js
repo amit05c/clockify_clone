@@ -13,7 +13,7 @@ userController.get("/user", async (req, res) => {
 });
 
 userController.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
+  const { name,email, password } = req.body;
   const user = await User.findOne({ email });
   if (user) {
     return res.status(400).send({ ok: false, msg: "User Already exist" });
@@ -22,7 +22,7 @@ userController.post("/signup", async (req, res) => {
     if (err) {
       res.status(400).send("Try again");
     }
-    const user = new User({ email, password: hash });
+    const user = new User({ name,email, password: hash });
     user.save();
     res.status(201).send(user);
   });
@@ -39,7 +39,7 @@ userController.post("/login", async (req, res) => {
       let token = jwt.sign({ email, userId: user._id }, process.env.TOKEN_KEY);
       return res
         .status(201)
-        .send({ message: "Login successfull", token: token, email: email });
+        .send({ message: "Login successfull", token: token, user: user.name });
     } else {
       return res.status(401).send("Invalid credentials");
     }
